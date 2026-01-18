@@ -54,7 +54,6 @@ VetClinic is a full-featured ASP.NET Core Razor Pages application designed to st
 
 ```
 VetClinic.Web/
-├── Controllers/           # MVC Controllers (HomeController)
 ├── Data/                  # Database context
 │   └── ApplicationDbContext.cs
 ├── Models/                # Domain entities
