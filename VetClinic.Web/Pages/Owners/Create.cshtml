@@ -1,0 +1,73 @@
+@page
+@model VetClinic.Web.Pages.Owners.CreateModel
+@{
+    ViewData["Title"] = "Add New Owner";
+}
+
+<div class="container">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-page="Index">Owners</a></li>
+            <li class="breadcrumb-item active">Add New</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-person-plus me-2"></i>Add New Owner</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Owner.FirstName" class="form-label"></label>
+                                <input asp-for="Owner.FirstName" class="form-control" placeholder="First name" />
+                                <span asp-validation-for="Owner.FirstName" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Owner.LastName" class="form-label"></label>
+                                <input asp-for="Owner.LastName" class="form-control" placeholder="Last name" />
+                                <span asp-validation-for="Owner.LastName" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Owner.Email" class="form-label"></label>
+                                <input asp-for="Owner.Email" type="email" class="form-control" placeholder="email@example.com" />
+                                <span asp-validation-for="Owner.Email" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Owner.Phone" class="form-label"></label>
+                                <input asp-for="Owner.Phone" class="form-control" placeholder="Phone number" />
+                                <span asp-validation-for="Owner.Phone" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Owner.Address" class="form-label"></label>
+                            <textarea asp-for="Owner.Address" class="form-control" rows="2" placeholder="Full address"></textarea>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle me-1"></i>Save Owner
+                            </button>
+                            <a asp-page="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle me-1"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

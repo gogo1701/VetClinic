@@ -1,0 +1,202 @@
+@page
+@model VetClinic.Web.Pages.Appointments.IndexModel
+@{
+    ViewData["Title"] = "Appointments";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="bi bi-calendar-event text-success me-2"></i>Appointments</h1>
+        <a asp-page="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-1"></i>New Appointment
+        </a>
+    </div>
+
+    <div class="card shadow mb-4" style="overflow: visible;">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0"><i class="bi bi-calendar-day me-2"></i>Upcoming Appointments</h5>
+        </div>
+        <div class="card-body" style="overflow: visible;">
+            @if (!Model.UpcomingAppointments.Any())
+            {
+                <p class="text-muted mb-0">No upcoming appointments scheduled.</p>
+            }
+            else
+            {
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Pet</th>
+                            <th>Owner</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var appointment in Model.UpcomingAppointments)
+                        {
+                            <tr>
+                                <td>
+                                    <strong>@appointment.ScheduledDate.ToString("MMM dd")</strong><br />
+                                    <small class="text-muted">@appointment.ScheduledDate.ToString("HH:mm")</small>
+                                </td>
+                                <td>
+                                    <a asp-page="/Pets/Details" asp-route-id="@appointment.Pet.Id">
+                                        @appointment.Pet.Name
+                                    </a>
+                                    <br /><small class="text-muted">@appointment.Pet.Species</small>
+                                </td>
+                                <td>@(appointment.Pet.Owner?.FullName ?? "N/A")</td>
+                                <td>@appointment.Reason</td>
+                                <td>
+                                    <span class="badge @GetStatusBadgeClass(appointment.Status)">
+                                        @appointment.Status
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle"
+                                                data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                                            <i class="bi bi-gear me-1"></i>Actions
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end shadow">
+                                            <li class="dropdown-header">Change Status</li>
+                                            <li>
+                                                <form method="post" asp-page-handler="UpdateStatus" asp-route-id="@appointment.Id" asp-route-status="Confirmed">
+                                                    <button type="submit" class="dropdown-item">
+                                                        <i class="bi bi-check-circle text-info me-2"></i>Confirm
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <form method="post" asp-page-handler="UpdateStatus" asp-route-id="@appointment.Id" asp-route-status="InProgress">
+                                                    <button type="submit" class="dropdown-item">
+                                                        <i class="bi bi-play-circle text-warning me-2"></i>Start
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <form method="post" asp-page-handler="UpdateStatus" asp-route-id="@appointment.Id" asp-route-status="Completed">
+                                                    <button type="submit" class="dropdown-item">
+                                                        <i class="bi bi-check-circle-fill text-success me-2"></i>Complete
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <form method="post" asp-page-handler="UpdateStatus" asp-route-id="@appointment.Id" asp-route-status="Cancelled">
+                                                    <button type="submit" class="dropdown-item text-danger">
+                                                        <i class="bi bi-x-circle me-2"></i>Cancel
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+
+    <div class="card shadow" style="overflow: visible;">
+        <div class="card-header">
+            <h5 class="mb-0">All Appointments</h5>
+        </div>
+        <div class="card-body" style="overflow: visible;">
+            @if (!Model.AllAppointments.Any())
+            {
+                <p class="text-muted mb-0">No appointments found.</p>
+            }
+            else
+            {
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Pet</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var appointment in Model.AllAppointments)
+                        {
+                            <tr>
+                                <td>@appointment.ScheduledDate.ToString("MMM dd, yyyy HH:mm")</td>
+                                <td>
+                                    <a asp-page="/Pets/Details" asp-route-id="@appointment.Pet.Id">
+                                        @appointment.Pet.Name
+                                    </a>
+                                </td>
+                                <td>@appointment.Reason</td>
+                                <td>
+                                    <span class="badge @GetStatusBadgeClass(appointment.Status)">
+                                        @appointment.Status
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                                                data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                                            <i class="bi bi-three-dots"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end shadow">
+                                            <li class="dropdown-header">Change Status</li>
+                                            <li>
+                                                <form method="post" asp-page-handler="UpdateStatus" asp-route-id="@appointment.Id" asp-route-status="Confirmed">
+                                                    <button type="submit" class="dropdown-item">
+                                                        <i class="bi bi-check-circle text-info me-2"></i>Confirm
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <form method="post" asp-page-handler="UpdateStatus" asp-route-id="@appointment.Id" asp-route-status="InProgress">
+                                                    <button type="submit" class="dropdown-item">
+                                                        <i class="bi bi-play-circle text-warning me-2"></i>Start
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <form method="post" asp-page-handler="UpdateStatus" asp-route-id="@appointment.Id" asp-route-status="Completed">
+                                                    <button type="submit" class="dropdown-item">
+                                                        <i class="bi bi-check-circle-fill text-success me-2"></i>Complete
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <form method="post" asp-page-handler="UpdateStatus" asp-route-id="@appointment.Id" asp-route-status="Cancelled">
+                                                    <button type="submit" class="dropdown-item text-danger">
+                                                        <i class="bi bi-x-circle me-2"></i>Cancel
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetStatusBadgeClass(VetClinic.Web.Models.AppointmentStatus status) => status switch
+    {
+        VetClinic.Web.Models.AppointmentStatus.Scheduled => "bg-primary",
+        VetClinic.Web.Models.AppointmentStatus.Confirmed => "bg-info",
+        VetClinic.Web.Models.AppointmentStatus.InProgress => "bg-warning text-dark",
+        VetClinic.Web.Models.AppointmentStatus.Completed => "bg-success",
+        VetClinic.Web.Models.AppointmentStatus.Cancelled => "bg-secondary",
+        _ => "bg-secondary"
+    };
+}

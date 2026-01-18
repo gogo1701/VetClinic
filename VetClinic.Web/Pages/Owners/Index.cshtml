@@ -1,0 +1,68 @@
+@page
+@model VetClinic.Web.Pages.Owners.IndexModel
+@{
+    ViewData["Title"] = "Owners";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="bi bi-people-fill text-primary me-2"></i>Pet Owners</h1>
+        <a asp-page="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-1"></i>Add New Owner
+        </a>
+    </div>
+
+    @if (!Model.Owners.Any())
+    {
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>No owners registered yet. <a asp-page="Create">Add the first owner!</a>
+        </div>
+    }
+    else
+    {
+        <div class="card shadow">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Pets</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var owner in Model.Owners)
+                            {
+                                <tr>
+                                    <td>
+                                        <a asp-page="Details" asp-route-id="@owner.Id" class="text-decoration-none">
+                                            <strong>@owner.FullName</strong>
+                                        </a>
+                                    </td>
+                                    <td><a href="mailto:@owner.Email">@owner.Email</a></td>
+                                    <td>@owner.Phone</td>
+                                    <td>
+                                        <span class="badge bg-info">@owner.Pets.Count pets</span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a asp-page="Details" asp-route-id="@owner.Id" class="btn btn-outline-primary">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a asp-page="Edit" asp-route-id="@owner.Id" class="btn btn-outline-secondary">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>

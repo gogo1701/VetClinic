@@ -1,0 +1,225 @@
+@page "{id:int}"
+@model VetClinic.Web.Pages.Pets.DetailsModel
+@{
+    ViewData["Title"] = Model.Pet?.Name ?? "Pet Details";
+}
+
+@if (Model.Pet == null)
+{
+    <div class="alert alert-warning">Pet not found.</div>
+    <a asp-page="Index" class="btn btn-primary">Back to Pets</a>
+}
+else
+{
+    <div class="container">
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-page="Index">Pets</a></li>
+                <li class="breadcrumb-item active">@Model.Pet.Name</li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <!-- Pet Information -->
+            <div class="col-lg-4 mb-4">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">@Model.Pet.Name</h5>
+                        @if (Model.Pet.IsAdopted)
+                        {
+                            <span class="badge bg-success">Adopted</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark">Available</span>
+                        }
+                    </div>
+                    <div class="card-body">
+                        <dl class="row mb-0">
+                            <dt class="col-5">Species:</dt>
+                            <dd class="col-7">@Model.Pet.Species</dd>
+                            
+                            <dt class="col-5">Breed:</dt>
+                            <dd class="col-7">@Model.Pet.Breed</dd>
+                            
+                            <dt class="col-5">Date of Birth:</dt>
+                            <dd class="col-7">@Model.Pet.DateOfBirth.ToShortDateString()</dd>
+                            
+                            <dt class="col-5">Color:</dt>
+                            <dd class="col-7">@(Model.Pet.Color ?? "N/A")</dd>
+                            
+                            <dt class="col-5">Weight:</dt>
+                            <dd class="col-7">@Model.Pet.Weight kg</dd>
+                            
+                            <dt class="col-5">Microchip:</dt>
+                            <dd class="col-7">@(Model.Pet.MicrochipNumber ?? "N/A")</dd>
+                            
+                            @if (Model.Pet.Owner != null)
+                            {
+                                <dt class="col-5">Owner:</dt>
+                                <dd class="col-7">
+                                    <a asp-page="/Owners/Details" asp-route-id="@Model.Pet.Owner.Id">
+                                        @Model.Pet.Owner.FullName
+                                    </a>
+                                </dd>
+                            }
+                            
+                            @if (Model.Pet.AdoptionDate.HasValue)
+                            {
+                                <dt class="col-5">Adopted On:</dt>
+                                <dd class="col-7">@Model.Pet.AdoptionDate.Value.ToShortDateString()</dd>
+                            }
+                        </dl>
+                    </div>
+                    <div class="card-footer">
+                        <div class="btn-group w-100">
+                            <a asp-page="Edit" asp-route-id="@Model.Pet.Id" class="btn btn-outline-primary">
+                                <i class="bi bi-pencil"></i> Edit
+                            </a>
+                            @if (!Model.Pet.IsAdopted)
+                            {
+                                <a asp-page="Adopt" asp-route-id="@Model.Pet.Id" class="btn btn-outline-success">
+                                    <i class="bi bi-heart-fill"></i> Adopt
+                                </a>
+                            }
+                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appointments and Medical Records -->
+            <div class="col-lg-8">
+                <!-- Upcoming Appointments -->
+                <div class="card shadow mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="bi bi-calendar-event me-2"></i>Appointments</h5>
+                        <a asp-page="/Appointments/Create" asp-route-petId="@Model.Pet.Id" class="btn btn-sm btn-primary">
+                            <i class="bi bi-plus"></i> New Appointment
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        @if (!Model.Pet.Appointments.Any())
+                        {
+                            <p class="text-muted mb-0">No appointments scheduled.</p>
+                        }
+                        else
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-sm table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Reason</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var appointment in Model.Pet.Appointments.Take(5))
+                                        {
+                                            <tr>
+                                                <td>@appointment.ScheduledDate.ToString("MMM dd, yyyy HH:mm")</td>
+                                                <td>@appointment.Reason</td>
+                                                <td>
+                                                    <span class="badge @GetStatusBadgeClass(appointment.Status)">
+                                                        @appointment.Status
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Medical Records -->
+                <div class="card shadow">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="bi bi-clipboard2-pulse me-2"></i>Medical Records</h5>
+                        <a asp-page="/MedicalRecords/Create" asp-route-petId="@Model.Pet.Id" class="btn btn-sm btn-primary">
+                            <i class="bi bi-plus"></i> Add Record
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        @if (!Model.Pet.MedicalRecords.Any())
+                        {
+                            <p class="text-muted mb-0">No medical records found.</p>
+                        }
+                        else
+                        {
+                            <div class="accordion" id="medicalRecordsAccordion">
+                                @foreach (var (record, index) in Model.Pet.MedicalRecords.Take(5).Select((r, i) => (r, i)))
+                                {
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button @(index > 0 ? "collapsed" : "")" type="button" 
+                                                    data-bs-toggle="collapse" data-bs-target="#record-@record.Id">
+                                                <span class="me-3">@record.VisitDate.ToString("MMM dd, yyyy")</span>
+                                                <span class="text-muted">@record.Diagnosis.Substring(0, Math.Min(50, record.Diagnosis.Length))...</span>
+                                            </button>
+                                        </h2>
+                                        <div id="record-@record.Id" class="accordion-collapse collapse @(index == 0 ? "show" : "")" 
+                                             data-bs-parent="#medicalRecordsAccordion">
+                                            <div class="accordion-body">
+                                                <p><strong>Diagnosis:</strong> @record.Diagnosis</p>
+                                                @if (!string.IsNullOrEmpty(record.Treatment))
+                                                {
+                                                    <p><strong>Treatment:</strong> @record.Treatment</p>
+                                                }
+                                                @if (!string.IsNullOrEmpty(record.Medications))
+                                                {
+                                                    <p><strong>Medications:</strong> @record.Medications</p>
+                                                }
+                                                @if (record.Cost.HasValue)
+                                                {
+                                                    <p><strong>Cost:</strong> $@record.Cost.Value.ToString("N2")</p>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete <strong>@Model.Pet.Name</strong>? This action cannot be undone.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form method="post" asp-page-handler="Delete">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@functions {
+    string GetStatusBadgeClass(VetClinic.Web.Models.AppointmentStatus status) => status switch
+    {
+        VetClinic.Web.Models.AppointmentStatus.Scheduled => "bg-primary",
+        VetClinic.Web.Models.AppointmentStatus.Confirmed => "bg-info",
+        VetClinic.Web.Models.AppointmentStatus.InProgress => "bg-warning text-dark",
+        VetClinic.Web.Models.AppointmentStatus.Completed => "bg-success",
+        VetClinic.Web.Models.AppointmentStatus.Cancelled => "bg-secondary",
+        _ => "bg-secondary"
+    };
+}

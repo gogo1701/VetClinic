@@ -1,0 +1,229 @@
+@page
+@model VetClinic.Web.Pages.IndexModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-5">
+                <i class="bi bi-hospital text-primary me-2"></i>Vet Clinic Dashboard
+            </h1>
+            <p class="lead text-muted">Welcome! Here's an overview of your clinic today.</p>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Total Pets</h6>
+                            <h2 class="mb-0">@Model.TotalPets</h2>
+                        </div>
+                        <i class="bi bi-heart-fill fs-1 opacity-50"></i>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <a asp-page="/Pets/Index" class="text-white text-decoration-none">
+                        View all <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Pets Adopted</h6>
+                            <h2 class="mb-0">@Model.AdoptedPets</h2>
+                        </div>
+                        <i class="bi bi-check-circle-fill fs-1 opacity-50"></i>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <span class="text-white">@Model.AvailablePets available for adoption</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Pet Owners</h6>
+                            <h2 class="mb-0">@Model.TotalOwners</h2>
+                        </div>
+                        <i class="bi bi-people-fill fs-1 opacity-50"></i>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <a asp-page="/Owners/Index" class="text-white text-decoration-none">
+                        View all <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-dark h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Today's Appointments</h6>
+                            <h2 class="mb-0">@Model.TodayAppointments</h2>
+                        </div>
+                        <i class="bi bi-calendar-event fs-1 opacity-50"></i>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <a asp-page="/Appointments/Index" class="text-dark text-decoration-none">
+                        View schedule <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-lightning-fill text-warning me-2"></i>Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a asp-page="/Pets/Create" class="btn btn-outline-primary">
+                            <i class="bi bi-plus-circle me-2"></i>Register New Pet
+                        </a>
+                        <a asp-page="/Owners/Create" class="btn btn-outline-success">
+                            <i class="bi bi-person-plus me-2"></i>Add New Owner
+                        </a>
+                        <a asp-page="/Appointments/Create" class="btn btn-outline-info">
+                            <i class="bi bi-calendar-plus me-2"></i>Schedule Appointment
+                        </a>
+                        <a asp-page="/Pets/Index" asp-route-isAdopted="false" class="btn btn-outline-warning">
+                            <i class="bi bi-heart me-2"></i>View Adoptable Pets
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-calendar-week text-primary me-2"></i>Upcoming Appointments</h5>
+                    <a asp-page="/Appointments/Index" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    @if (!Model.UpcomingAppointments.Any())
+                    {
+                        <div class="text-center py-4">
+                            <i class="bi bi-calendar-x fs-1 text-muted"></i>
+                            <p class="text-muted mt-2">No upcoming appointments</p>
+                            <a asp-page="/Appointments/Create" class="btn btn-primary btn-sm">Schedule Now</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Pet</th>
+                                        <th>Reason</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var apt in Model.UpcomingAppointments)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@apt.ScheduledDate.ToString("MMM dd")</strong><br/>
+                                                <small>@apt.ScheduledDate.ToString("HH:mm")</small>
+                                            </td>
+                                            <td>
+                                                <a asp-page="/Pets/Details" asp-route-id="@apt.Pet.Id">
+                                                    @apt.Pet.Name
+                                                </a>
+                                            </td>
+                                            <td>@apt.Reason</td>
+                                            <td>
+                                                <span class="badge @GetStatusClass(apt.Status)">@apt.Status</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-clock-history text-secondary me-2"></i>Recently Added Pets</h5>
+                    <a asp-page="/Pets/Index" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    @if (!Model.RecentPets.Any())
+                    {
+                        <p class="text-muted mb-0">No pets registered yet.</p>
+                    }
+                    else
+                    {
+                        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3">
+                            @foreach (var pet in Model.RecentPets)
+                            {
+                                <div class="col">
+                                    <div class="card h-100 border-0 bg-light">
+                                        <div class="card-body text-center">
+                                            <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-2" style="width: 48px; height: 48px;">
+                                            </div>
+                                            <h6 class="card-title mb-1">@pet.Name</h6>
+                                            <p class="card-text small text-muted mb-2">@pet.Species - @pet.Breed</p>
+                                            @if (pet.IsAdopted)
+                                            {
+                                                <span class="badge bg-success">Adopted</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-warning text-dark">Available</span>
+                                            }
+                                        </div>
+                                        <div class="card-footer bg-transparent border-0 text-center">
+                                            <a asp-page="/Pets/Details" asp-route-id="@pet.Id" class="btn btn-sm btn-outline-primary">
+                                                View Details
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetStatusClass(VetClinic.Web.Models.AppointmentStatus status) => status switch
+    {
+        VetClinic.Web.Models.AppointmentStatus.Scheduled => "bg-primary",
+        VetClinic.Web.Models.AppointmentStatus.Confirmed => "bg-info",
+        VetClinic.Web.Models.AppointmentStatus.InProgress => "bg-warning text-dark",
+        VetClinic.Web.Models.AppointmentStatus.Completed => "bg-success",
+        VetClinic.Web.Models.AppointmentStatus.Cancelled => "bg-secondary",
+        _ => "bg-secondary"
+    };
+}

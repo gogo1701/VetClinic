@@ -1,0 +1,92 @@
+@page
+@model VetClinic.Web.Pages.MedicalRecords.CreateModel
+@{
+    ViewData["Title"] = "Add Medical Record";
+}
+
+<div class="container">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-page="Index">Medical Records</a></li>
+            <li class="breadcrumb-item active">Add New</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-clipboard2-plus me-2"></i>Add Medical Record</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Record.PetId" class="form-label">Pet <span class="text-danger">*</span></label>
+                                <select asp-for="Record.PetId" asp-items="Model.Pets" class="form-select">
+                                    <option value="">-- Select a pet --</option>
+                                </select>
+                                <span asp-validation-for="Record.PetId" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Record.VisitDate" class="form-label">Visit Date <span class="text-danger">*</span></label>
+                                <input asp-for="Record.VisitDate" type="date" class="form-control" />
+                                <span asp-validation-for="Record.VisitDate" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Record.Diagnosis" class="form-label">Diagnosis <span class="text-danger">*</span></label>
+                            <textarea asp-for="Record.Diagnosis" class="form-control" rows="3" 
+                                      placeholder="Enter diagnosis details..."></textarea>
+                            <span asp-validation-for="Record.Diagnosis" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Record.Treatment" class="form-label">Treatment</label>
+                            <textarea asp-for="Record.Treatment" class="form-control" rows="3" 
+                                      placeholder="Enter treatment provided..."></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label asp-for="Record.Medications" class="form-label">Medications</label>
+                                <textarea asp-for="Record.Medications" class="form-control" rows="2" 
+                                          placeholder="List medications prescribed..."></textarea>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="Record.Cost" class="form-label">Cost</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input asp-for="Record.Cost" type="number" step="0.01" class="form-control" placeholder="0.00" />
+                                </div>
+                                <span asp-validation-for="Record.Cost" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Record.VetNotes" class="form-label">Veterinarian Notes</label>
+                            <textarea asp-for="Record.VetNotes" class="form-control" rows="3" 
+                                      placeholder="Additional notes..."></textarea>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle me-1"></i>Save Record
+                            </button>
+                            <a asp-page="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle me-1"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

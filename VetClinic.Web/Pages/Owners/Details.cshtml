@@ -1,0 +1,92 @@
+@page "{id:int}"
+@model VetClinic.Web.Pages.Owners.DetailsModel
+@{
+    ViewData["Title"] = Model.Owner?.FullName ?? "Owner Details";
+}
+
+@if (Model.Owner == null)
+{
+    <div class="alert alert-warning">Owner not found.</div>
+}
+else
+{
+    <div class="container">
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-page="Index">Owners</a></li>
+                <li class="breadcrumb-item active">@Model.Owner.FullName</li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <div class="col-lg-4 mb-4">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="bi bi-person-circle me-2"></i>@Model.Owner.FullName</h5>
+                    </div>
+                    <div class="card-body">
+                        <dl class="mb-0">
+                            <dt><i class="bi bi-envelope me-2"></i>Email</dt>
+                            <dd><a href="mailto:@Model.Owner.Email">@Model.Owner.Email</a></dd>
+                            
+                            <dt><i class="bi bi-telephone me-2"></i>Phone</dt>
+                            <dd>@Model.Owner.Phone</dd>
+                            
+                            @if (!string.IsNullOrEmpty(Model.Owner.Address))
+                            {
+                                <dt><i class="bi bi-geo-alt me-2"></i>Address</dt>
+                                <dd>@Model.Owner.Address</dd>
+                            }
+                            
+                            <dt><i class="bi bi-calendar me-2"></i>Registered</dt>
+                            <dd>@Model.Owner.CreatedAt.ToShortDateString()</dd>
+                        </dl>
+                    </div>
+                    <div class="card-footer">
+                        <a asp-page="Edit" asp-route-id="@Model.Owner.Id" class="btn btn-outline-primary">
+                            <i class="bi bi-pencil me-1"></i>Edit
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="card shadow">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="bi bi-heart-fill text-danger me-2"></i>Pets</h5>
+                        <span class="badge bg-primary">@Model.Owner.Pets.Count pets</span>
+                    </div>
+                    <div class="card-body">
+                        @if (!Model.Owner.Pets.Any())
+                        {
+                            <p class="text-muted mb-0">No pets registered for this owner.</p>
+                        }
+                        else
+                        {
+                            <div class="row row-cols-1 row-cols-md-2 g-3">
+                                @foreach (var pet in Model.Owner.Pets)
+                                {
+                                    <div class="col">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <h6 class="card-title">@pet.Name</h6>
+                                                <p class="card-text small text-muted">
+                                                    @pet.Species - @pet.Breed
+                                                </p>
+                                            </div>
+                                            <div class="card-footer bg-transparent">
+                                                <a asp-page="/Pets/Details" asp-route-id="@pet.Id" class="btn btn-sm btn-outline-primary">
+                                                    View Details
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

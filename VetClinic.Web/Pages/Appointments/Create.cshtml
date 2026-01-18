@@ -1,0 +1,98 @@
+@page
+@model VetClinic.Web.Pages.Appointments.CreateModel
+@{
+    ViewData["Title"] = "New Appointment";
+}
+
+<div class="container">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-page="Index">Appointments</a></li>
+            <li class="breadcrumb-item active">New</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-calendar-plus me-2"></i>Schedule Appointment</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Appointment.PetId" class="form-label">Pet</label>
+                            <select asp-for="Appointment.PetId" asp-items="Model.Pets" class="form-select">
+                                <option value="">-- Select a pet --</option>
+                            </select>
+                            <span asp-validation-for="Appointment.PetId" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Appointment.ScheduledDate" class="form-label">Date</label>
+                                <input asp-for="Appointment.ScheduledDate" type="datetime-local" class="form-control" />
+                                <span asp-validation-for="Appointment.ScheduledDate" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Quick Select</label>
+                                <div class="btn-group w-100">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="setDate(0)">Today</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="setDate(1)">Tomorrow</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="setDate(7)">Next Week</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Appointment.Reason" class="form-label">Reason for Visit</label>
+                            <select asp-for="Appointment.Reason" class="form-select">
+                                <option value="">-- Select reason --</option>
+                                <option value="Regular Checkup">Regular Checkup</option>
+                                <option value="Vaccination">Vaccination</option>
+                                <option value="Illness">Illness</option>
+                                <option value="Injury">Injury</option>
+                                <option value="Surgery">Surgery</option>
+                                <option value="Dental">Dental</option>
+                                <option value="Grooming">Grooming</option>
+                                <option value="Follow-up">Follow-up</option>
+                                <option value="Other">Other</option>
+                            </select>
+                            <span asp-validation-for="Appointment.Reason" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Appointment.Notes" class="form-label">Additional Notes</label>
+                            <textarea asp-for="Appointment.Notes" class="form-control" rows="3" 
+                                      placeholder="Any additional information..."></textarea>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle me-1"></i>Schedule Appointment
+                            </button>
+                            <a asp-page="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle me-1"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function setDate(daysFromNow) {
+            const date = new Date();
+            date.setDate(date.getDate() + daysFromNow);
+            date.setHours(9, 0, 0, 0);
+            const formatted = date.toISOString().slice(0, 16);
+            document.getElementById('Appointment_ScheduledDate').value = formatted;
+        }
+    </script>
+}

@@ -1,0 +1,123 @@
+@page "{id:int}"
+@model VetClinic.Web.Pages.MedicalRecords.DetailsModel
+@{
+    ViewData["Title"] = "Medical Record Details";
+}
+
+@if (Model.Record == null)
+{
+    <div class="alert alert-warning">Medical record not found.</div>
+    <a asp-page="Index" class="btn btn-primary">Back to Records</a>
+}
+else
+{
+    <div class="container">
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-page="Index">Medical Records</a></li>
+                <li class="breadcrumb-item active">Record #@Model.Record.Id</li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card shadow mb-4">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="bi bi-clipboard2-pulse me-2"></i>Medical Record</h5>
+                        <span class="badge bg-light text-dark">@Model.Record.VisitDate.ToString("MMMM dd, yyyy")</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <h6 class="text-muted mb-2">Diagnosis</h6>
+                            <p class="fs-5">@Model.Record.Diagnosis</p>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(Model.Record.Treatment))
+                        {
+                            <div class="mb-4">
+                                <h6 class="text-muted mb-2">Treatment</h6>
+                                <p>@Model.Record.Treatment</p>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Model.Record.Medications))
+                        {
+                            <div class="mb-4">
+                                <h6 class="text-muted mb-2"><i class="bi bi-capsule me-1"></i>Medications</h6>
+                                <div class="bg-light p-3 rounded">
+                                    @Model.Record.Medications
+                                </div>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Model.Record.VetNotes))
+                        {
+                            <div class="mb-4">
+                                <h6 class="text-muted mb-2"><i class="bi bi-journal-text me-1"></i>Veterinarian Notes</h6>
+                                <p class="fst-italic">@Model.Record.VetNotes</p>
+                            </div>
+                        }
+
+                        @if (Model.Record.Cost.HasValue)
+                        {
+                            <div class="alert alert-info">
+                                <h6 class="mb-0"><i class="bi bi-currency-dollar me-1"></i>Total Cost: 
+                                    <strong>$@Model.Record.Cost.Value.ToString("N2")</strong>
+                                </h6>
+                            </div>
+                        }
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-flex gap-2">
+                            <a asp-page="Edit" asp-route-id="@Model.Record.Id" class="btn btn-warning">
+                                <i class="bi bi-pencil me-1"></i>Edit
+                            </a>
+                            <a asp-page="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-1"></i>Back to List
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card shadow">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="bi bi-heart-fill text-danger me-2"></i>Patient Information</h6>
+                    </div>
+                    <div class="card-body">
+                        <dl class="mb-0">
+                            <dt>Pet Name</dt>
+                            <dd>
+                                <a asp-page="/Pets/Details" asp-route-id="@Model.Record.Pet.Id">
+                                    @Model.Record.Pet.Name
+                                </a>
+                            </dd>
+
+                            <dt>Species</dt>
+                            <dd>@Model.Record.Pet.Species</dd>
+
+                            <dt>Breed</dt>
+                            <dd>@Model.Record.Pet.Breed</dd>
+
+                            @if (Model.Record.Pet.Owner != null)
+                            {
+                                <dt>Owner</dt>
+                                <dd>
+                                    <a asp-page="/Owners/Details" asp-route-id="@Model.Record.Pet.Owner.Id">
+                                        @Model.Record.Pet.Owner.FullName
+                                    </a>
+                                </dd>
+                            }
+                        </dl>
+                    </div>
+                    <div class="card-footer">
+                        <a asp-page="/Pets/Details" asp-route-id="@Model.Record.Pet.Id" class="btn btn-outline-primary btn-sm w-100">
+                            View Pet Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
