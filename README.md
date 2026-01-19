@@ -160,7 +160,7 @@ dotnet tool install --global dotnet-ef
 This will create:
 
 - `VetClinic.db` - SQLite database file in the project root
-- All required tables (Pets, Owners, Appointments, MedicalRecords, AspNetUsers, etc.)
+- All required tables (Pets, Owners, Appointments, MedicalRecords, etc.)
 
 #### Step 5: Build the Application (Optional)
 
